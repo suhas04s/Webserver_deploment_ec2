@@ -1,0 +1,108 @@
+# Definition of Resources
+Virtual Private Cloud (VPC):
+
+A virtual network dedicated to your AWS account. It allows you to define a network space, including IP address ranges, subnets, route tables, and internet gateways. With VPC, you control network access, data flow, and isolation.
+Public Subnet:
+
+A section of the VPC with direct access to the internet. Resources like EC2 instances within a public subnet can be accessed publicly if configured with a public IP.
+Internet Gateway (IGW):
+
+A component that connects the VPC to the internet, enabling internet-bound traffic. It’s attached to a VPC and allows resources within public subnets to communicate outside the VPC.
+EC2 Instance:
+
+A virtual server where you can run applications, websites, and other services. In this setup, we use an EC2 instance to run the Nginx web server.
+Security Group:
+
+A virtual firewall for EC2 instances to control inbound and outbound traffic. Security groups enable controlled access to and from instances based on IP and port rules.
+Nginx:
+
+An open-source web server used for serving static files and as a reverse proxy. Nginx will serve as the HTTP and HTTPS endpoint for the web application.
+Elastic Load Balancer (ALB):
+
+A load balancer that distributes incoming traffic across multiple targets (like EC2 instances) for better reliability and scaling. In our case, it also handles HTTPS termination for secure connections.
+Route 53:
+
+AWS’s DNS service that translates domain names to IP addresses, making it easier to route traffic to your AWS resources using domain names.
+AWS Certificate Manager (ACM):
+
+A service that provides free SSL/TLS certificates to secure communications for web applications. ACM integrates with ALB to enable HTTPS encryption.
+
+# Workflow with Explanation
+Setting up the VPC and Public Subnets:
+
+Purpose: To create an isolated network in which you can deploy your resources.
+Process: You create a VPC with an IP address range (CIDR block) and set up two public subnets, each in different availability zones. This allows for better redundancy and availability of your resources.
+Outcome: A network environment with public subnets that can directly access the internet.
+Attaching an Internet Gateway to the VPC:
+
+Purpose: To allow internet traffic to flow into and out of resources within the public subnet.
+Process: You create an Internet Gateway and attach it to the VPC. Then, update the route table for the public subnet to route outbound traffic through the gateway.
+Outcome: Your EC2 instances within the public subnets can reach and be reached by the internet.
+Launching an EC2 Instance and Configuring Nginx:
+
+Purpose: To host your web application on a server accessible from the internet.
+Process: You launch an EC2 instance in the public subnet, SSH into it, and install Nginx to serve as the web server. You configure it to serve HTTP and HTTPS traffic.
+Outcome: An operational web server running Nginx, ready to handle incoming requests.
+Setting up a Security Group for the EC2 Instance:
+
+Purpose: To control access to your instance and restrict traffic to only required ports.
+Process: Create a security group that allows HTTP (80), HTTPS (443), and SSH (22) access. Attach this security group to the EC2 instance.
+Outcome: The instance is secure, allowing only essential inbound connections while restricting other types of traffic.
+Configuring an Elastic Load Balancer (ALB):
+
+Purpose: To distribute incoming traffic across multiple instances and enable HTTPS encryption.
+Process: Set up an ALB that listens on HTTP and HTTPS ports. Attach a target group with your EC2 instance as the target, so the ALB forwards traffic to it.
+Outcome: Traffic is distributed, and HTTPS termination is handled by the ALB, making the application accessible via a secure connection.
+Setting up Route 53 for DNS Management:
+
+Purpose: To make it easier for users to reach your application via a custom domain name.
+Process: Create a hosted zone in Route 53 and add an A record that points to the ALB, making it the destination for your domain.
+Outcome: Users can access the application through a memorable domain name instead of an IP address.
+Securing the Domain with AWS Certificate Manager (ACM):
+
+Purpose: To encrypt data transferred between the client and server, ensuring data security and user trust.
+Process: Request a certificate for your domain in ACM and validate ownership by adding DNS records to Route 53. Attach this certificate to the ALB’s HTTPS listener.
+Outcome: The website is accessible via HTTPS, and data exchanged between the server and client is encrypted, enhancing security.
+Summary of the Workflow
+Network Setup: Configure the VPC, public subnets, and internet gateway to define the networking environment and allow internet access.
+Server Setup: Launch and configure an EC2 instance with Nginx as the web server.
+Traffic Control: Use a Security Group to manage incoming and outgoing traffic to the instance.
+Scalability and Security with Load Balancer: Set up an ALB to manage HTTPS connections and distribute traffic, ensuring high availability.
+Domain Configuration: Use Route 53 for custom domain routing to the application.
+SSL/TLS Encryption: Enable HTTPS on the Load Balancer with an ACM SSL certificate for secure data transmission.
+By following these steps, you create a secure, scalable, and highly available web server architecture on AWS.
+
+# SSL certificate overview
+An SSL certificate (Secure Sockets Layer certificate) is a digital certificate that authenticates a website's identity and enables an encrypted connection between a web server and a web browser. This encryption helps protect any data transferred between the server and the client, ensuring it remains private and secure. SSL has largely been replaced by TLS (Transport Layer Security), but the term "SSL" is still commonly used.
+
+How SSL Certificates Work
+Server Identity Verification:
+
+When you visit an SSL-enabled website, your browser checks the SSL certificate to verify that the website is legitimate and not a fake or imposter site. This verification is done by checking that the certificate is issued by a trusted Certificate Authority (CA) like Let's Encrypt, DigiCert, or GlobalSign.
+Public and Private Key Pair:
+
+SSL certificates use public key cryptography. The SSL certificate includes a public key and a private key, which work together to encrypt and decrypt data. The public key is shared with anyone, but the private key is kept secure on the server.
+SSL Handshake:
+
+When a user connects to an SSL-enabled site, their browser and the server go through an SSL handshake to establish a secure connection. The process includes:
+Browser request: The browser requests the server’s SSL certificate.
+Certificate validation: The browser verifies the certificate’s authenticity and expiration.
+Session key creation: If verified, the browser and server create a unique session key to encrypt the data.
+Encrypted connection: All data exchanged between the server and browser during the session is encrypted using this session key.
+Data Encryption and Transfer:
+
+With the connection secure, data transferred between the browser and server is encrypted. Only the server and the specific user’s browser can decrypt the data, keeping it secure from potential eavesdroppers.
+Why SSL Certificates Are Important
+Security: SSL certificates protect sensitive information (such as login credentials, payment information, etc.) by encrypting the data.
+Trust: SSL certificates provide visual indicators like a padlock icon and "https://" in the URL, which signal trustworthiness to users.
+SEO Benefits: SSL is now a ranking factor in search engines like Google, so websites with SSL certificates are favored over non-secure sites.
+
+
+
+
+
+
+
+
+
+
